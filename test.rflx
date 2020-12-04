@@ -4,11 +4,13 @@ package Test is
       TEST => 0
    ) with Size => 16;
 
-   type T is mod 2**8;
+   type A is mod 2**8;
+   type T is array of A;
 
    type Test_Frame is
       message
-         Test : T;
+         Test : T
+            with Size => 16;
          B : Enum;
       end message;
 
