@@ -1,14 +1,14 @@
 package Test is
 
    type Enum is (
-      TEST_ENUM => 0
-   ) with Size => 8;
+      TEST => 0
+   ) with Size => 16;
 
    type T is mod 2**8;
 
-   type Test is
+   type Test_Frame is
       message
-         Test_Enum : T;
+         Test : T;
          B : Enum;
       end message;
 
