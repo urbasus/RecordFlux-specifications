@@ -1,0 +1,15 @@
+package Test is
+
+   type Enum is (
+      A => 0
+   ) with Size => 8;
+
+   T is mod 2**8;
+
+   type Test is
+      message
+         A : T;
+         B : Enum;
+      end message;
+
+end Test;
