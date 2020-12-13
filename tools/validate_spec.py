@@ -65,7 +65,7 @@ def cli(argv: List[str]) -> Union[int, str]:
     )
 
     args = parser.parse_args(argv[1:])
-    if args.directory_invalid is None and args.directory_invalid is None:
+    if args.directory_valid is None and args.directory_invalid is None:
         parser.error("must provide directory with valid and/or invalid messages")
 
     if args.json_output is not None and args.json_output.exists():
