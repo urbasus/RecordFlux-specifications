@@ -165,11 +165,10 @@ class JsonOutputWriter:
         exception_type: Optional[Type[BaseException]],
         exception_value: Optional[BaseException],
         traceback: Optional[TracebackType],
-    ) -> bool:
+    ) -> None:
         if self.file is not None:
             self.file.write("\n]")
             self.file.close()
-        return False
 
     def write(self, content: Dict[str, object]) -> None:
         if self.file is not None:
