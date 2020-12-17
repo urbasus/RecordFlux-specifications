@@ -1,4 +1,5 @@
 import os
+import re
 
 import pytest
 
@@ -162,19 +163,19 @@ def test_ethernet_negative() -> None:
 
 
 def test_abort_on_error() -> None:
-    assert (
-        cli(
-            [
-                "validate_spec",
-                "-s",
-                "in_ethernet.rflx",
-                "-m",
-                "Ethernet::Frame",
-                "-v",
-                "tests/data/ethernet/invalid",
-                "-i",
-                "tests/data/ethernet/valid",
-                "--abort-on-error",
-            ]
-        )
-    ) == "tests/data/ethernet/invalid/ethernet_invalid_too_long.raw classified as FalseNegative"
+    ret = cli(
+        [
+            "validate_spec",
+            "-s",
+            "in_ethernet.rflx",
+            "-m",
+            "Ethernet::Frame",
+            "-v",
+            "tests/data/ethernet/invalid",
+            "-i",
+            "tests/data/ethernet/valid",
+            "--abort-on-error",
+        ]
+    )
+    assert isinstance(ret, str)
+    assert re.match(r"^(tests/data/ethernet/invalid/).+(\.raw) (classified as FalseNegative)$", ret)
