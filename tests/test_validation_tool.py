@@ -125,7 +125,26 @@ def test_cli_path_does_not_exist() -> None:
     ) == "tests/data/ethernet/non_existent_dir does not exist"
 
 
-def test_ethernet_positive() -> None:
+def test_cli_abort_on_error() -> None:
+    ret = cli(
+        [
+            "validate_spec",
+            "-s",
+            "in_ethernet.rflx",
+            "-m",
+            "Ethernet::Frame",
+            "-v",
+            "tests/data/ethernet/invalid",
+            "-i",
+            "tests/data/ethernet/valid",
+            "--abort-on-error",
+        ]
+    )
+    assert isinstance(ret, str)
+    assert re.match(r"^(tests/data/ethernet/invalid/).+(\.raw) (classified as FalseNegative)$", ret)
+
+
+def test_validation_positive() -> None:
     assert (
         cli(
             [
@@ -144,7 +163,7 @@ def test_ethernet_positive() -> None:
     )
 
 
-def test_ethernet_negative() -> None:
+def test_validation_negative() -> None:
     assert (
         cli(
             [
@@ -160,22 +179,3 @@ def test_ethernet_negative() -> None:
             ]
         )
     ) == "8 messages were classified incorrectly"
-
-
-def test_abort_on_error() -> None:
-    ret = cli(
-        [
-            "validate_spec",
-            "-s",
-            "in_ethernet.rflx",
-            "-m",
-            "Ethernet::Frame",
-            "-v",
-            "tests/data/ethernet/invalid",
-            "-i",
-            "tests/data/ethernet/valid",
-            "--abort-on-error",
-        ]
-    )
-    assert isinstance(ret, str)
-    assert re.match(r"^(tests/data/ethernet/invalid/).+(\.raw) (classified as FalseNegative)$", ret)
