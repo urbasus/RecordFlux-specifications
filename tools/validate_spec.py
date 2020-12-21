@@ -111,15 +111,21 @@ def validation_main(args: argparse.Namespace) -> None:
         identifier = ID(root_message_id)
     except AssertionError as e:
         raise ValidationError(f'invalid identifier "{root_message_id}" : {e}') from e
+    message_name = str(identifier.name)
+    package_name = str(identifier.parent)
+    if message_name == "" or package_name == "":
+        raise ValidationError(
+            f'invalid identifier: "{str(identifier)}"; PackageName = "{package_name}", '
+            f'MessageName = "{message_name}" - must be provided as <PackageName>::<MessageName>'
+        )
 
     try:
         pdu_message = PyRFLX.from_specs([str(path_spec)], skip_model_verification=no_verification)[
-            str(identifier.parent)
-        ][str(identifier.name)]
+            package_name
+        ][message_name]
     except KeyError as e:
         raise ValidationError(
-            f'message "{str(identifier.name)}" could not be '
-            f'found in package "{str(identifier.parent)}"'
+            f'message "{message_name}" could not be found in package "{package_name}"'
         ) from e
     except FileNotFoundError as e:
         raise ValidationError(f"specification {e}") from e
