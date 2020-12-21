@@ -164,6 +164,21 @@ def test_cli_abort_on_error() -> None:
     assert re.match(r"^(tests/data/ethernet/invalid/).+(\.raw) (classified as FalseNegative)$", ret)
 
 
+def test_cli_not_regular_file(tmpdir) -> None:
+    subdir = tmpdir.mkdir("test")
+    assert cli(
+        [
+            "validate_spec",
+            "-s",
+            "in_ethernet.rflx",
+            "-m",
+            "Ethernet::Frame",
+            "-v",
+            f"{tmpdir}",
+        ]
+    ) == f"{subdir} is not a regular file"
+
+
 def test_validation_positive() -> None:
     assert (
         cli(
