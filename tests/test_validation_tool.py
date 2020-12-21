@@ -145,6 +145,35 @@ def test_cli_path_is_not_directory(tmp_path) -> None:
     ) == f"{tmp_file} does not exist or is not a directory"
 
 
+@pytest.fixture
+def tmp_path_restricted(tmp_path):
+    tmp_path.chmod(0o100)
+    yield tmp_path
+    tmp_path.chmod(0o700)
+
+
+def test_cli_cannot_open_output_file(tmp_path_restricted) -> None:
+    assert (
+        cli(
+            [
+                "validate_spec",
+                "-s",
+                "in_ethernet.rflx",
+                "-m",
+                "Ethernet::Frame",
+                "-v",
+                "tests/data/ethernet/valid",
+                "-i",
+                "tests/data/ethernet/invalid",
+                "-o",
+                f"{tmp_path_restricted}/test.json",
+            ]
+        )
+        == f"cannot open output file {tmp_path_restricted}/test.json:"
+        f" [Errno 13] Permission denied: '{tmp_path_restricted}/test.json'"
+    )
+
+
 def test_cli_abort_on_error() -> None:
     ret = cli(
         [
@@ -166,17 +195,20 @@ def test_cli_abort_on_error() -> None:
 
 def test_cli_not_regular_file(tmpdir) -> None:
     subdir = tmpdir.mkdir("test")
-    assert cli(
-        [
-            "validate_spec",
-            "-s",
-            "in_ethernet.rflx",
-            "-m",
-            "Ethernet::Frame",
-            "-v",
-            f"{tmpdir}",
-        ]
-    ) == f"{subdir} is not a regular file"
+    assert (
+        cli(
+            [
+                "validate_spec",
+                "-s",
+                "in_ethernet.rflx",
+                "-m",
+                "Ethernet::Frame",
+                "-v",
+                f"{tmpdir}",
+            ]
+        )
+        == f"{subdir} is not a regular file"
+    )
 
 
 def test_validation_positive() -> None:
